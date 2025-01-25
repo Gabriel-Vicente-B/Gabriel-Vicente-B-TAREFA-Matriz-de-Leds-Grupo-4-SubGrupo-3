@@ -88,6 +88,8 @@ int main()
     uint sm = pio_claim_unused_sm(pio, true);
     pio_matrix_program_init(pio, sm, offset, OUT_PIN);
     
+    all_led_azul_100(valor_led,pio,sm,r,g,b);
+
         while (true) {
         char tecla = ler_teclado_matricial();
         switch (tecla){
