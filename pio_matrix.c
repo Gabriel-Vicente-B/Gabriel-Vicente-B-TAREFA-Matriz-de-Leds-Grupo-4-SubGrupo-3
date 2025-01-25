@@ -100,7 +100,7 @@ int main()
                 animacao_2();
                 break;
             case '3':
-                animacao_3();
+                animacao_3(valor_led, pio, sm, r, g, b);
                 break;
             case '4':
                 animacao_4();
@@ -239,11 +239,71 @@ void animacao_2(){
 
     
 }
-void animacao_3(){
+void animacao_3(uint32_t valor_led, PIO pio, uint sm, double r, double g, double b) {
+    double letras[7][25] = {
+        {1.0, 1.0, 1.0, 1.0, 1.0,  // Letra E
+         0.0, 0.0, 0.0, 0.0, 1.0, 
+         1.0, 1.0, 1.0, 1.0, 1.0,
+         0.0, 0.0, 0.0, 0.0, 1.0,
+         1.0, 1.0, 1.0, 1.0, 1.0},
 
+        {1.0, 0.0, 0.0, 0.0, 1.0,  // Letra M
+         1.0, 1.0, 0.0, 1.0, 1.0,
+         1.0, 0.0, 1.0, 0.0, 1.0,
+         1.0, 0.0, 0.0, 0.0, 1.0,
+         1.0, 0.0, 0.0, 0.0, 1.0},
 
-    
+        {1.0, 1.0, 1.0, 1.0, 0.0,  // Letra B
+         1.0, 0.0, 0.0, 0.0, 1.0,
+         1.0, 1.0, 1.0, 1.0, 0.0,
+         1.0, 0.0, 0.0, 0.0, 1.0,
+         1.0, 1.0, 1.0, 1.0, 0.0},
+
+        {0.0, 1.0, 1.0, 1.0, 0.0,  // Letra A
+         1.0, 0.0, 0.0, 0.0, 1.0,
+         1.0, 1.0, 1.0, 1.0, 1.0,
+         1.0, 0.0, 0.0, 0.0, 1.0,
+         1.0, 0.0, 0.0, 0.0, 1.0},
+
+        {1.0, 1.0, 1.0, 1.0, 0.0,  // Letra R
+         1.0, 0.0, 0.0, 0.0, 1.0,
+         1.0, 1.0, 1.0, 1.0, 0.0,
+         0.0, 0.0, 1.0, 0.0, 1.0,
+         1.0, 0.0, 0.0, 1.0, 0.0},
+
+        {0.0, 1.0, 1.0, 1.0, 0.0,  // Letra C
+         1.0, 0.0, 0.0, 0.0, 1.0,
+         1.0, 0.0, 0.0, 0.0, 0.0,
+         1.0, 0.0, 0.0, 0.0, 1.0,
+         0.0, 1.0, 1.0, 1.0, 0.0},
+
+        {0.0, 1.0, 1.0, 1.0, 0.0,  // Letra A (repetida)
+         1.0, 0.0, 0.0, 0.0, 1.0,
+         1.0, 1.0, 1.0, 1.0, 1.0,
+         1.0, 0.0, 0.0, 0.0, 1.0,
+         1.0, 0.0, 0.0, 0.0, 1.0}
+    };
+
+    for (int letra = 0; letra < 7; letra++) { // Itera sobre as letras
+        for (int coluna = 0; coluna < 5; coluna++) { // Colunas de cada letra
+            for (int linha = 0; linha < 5; linha++) { // Linhas de cada letra
+                valor_led = matrix_rgb(
+                    letras[letra][linha * 5 + coluna] * b, 
+                    letras[letra][linha * 5 + coluna] * r, 
+                    letras[letra][linha * 5 + coluna] * g
+                );
+                pio_sm_put_blocking(pio, sm, valor_led);
+            }
+        }
+
+        // Imprime o valor binário da letra exibida
+        imprimir_binario(valor_led);
+
+        // Espera 2 segundos antes de mostrar a próxima letra
+        sleep_ms(2000);
+    }
 }
+
 void animacao_4(){
 
 

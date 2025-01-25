@@ -1,1 +1,18 @@
-build
+# Ignorar o diretório de build
+build/
+
+# Ignorar arquivos binários e objetos
+*.o
+*.elf
+*.bin
+*.uf2
+*.map
+*.d
+
+# Ignorar logs e arquivos temporários
+*.log
+*~
+
+# Ignorar arquivos de backup
+*.bak
+*.swp
