@@ -16,7 +16,7 @@
 // Pinos GPIO dispostos segundo linhas e colunas de cima para baixo, esquerda para direita
 // Linha 1 = GPIO_4, Linha 2 = GPIO_8...
 // Coluna 1 = GPIO_17, Coluna 2 = GPIO_18...
-const uint rowPin[row] = {8,9,6, 5};
+const uint rowPin[row] = {8, 9, 6, 5};
 const uint columnPin[column] = {4, 3, 2, 1};
 
 // Matriz representando os botões do teclado matricial
@@ -69,7 +69,8 @@ int main()
     double r = 0.0, b = 0.0, g = 0.0;
     ok = set_sys_clock_khz(128000, false);
     stdio_init_all();
-    if (ok) printf("clock set to %ld\n", clock_get_hz(clk_sys));
+    if (ok)
+        printf("clock set to %ld\n", clock_get_hz(clk_sys));
 
     uint offset = pio_add_program(pio, &pio_matrix_program);
     uint sm = pio_claim_unused_sm(pio, true);
@@ -116,9 +117,6 @@ int main()
             break;
         case '#':
             all_led_branco_20(valor_led, pio, sm, r, g, b);
-            break;
-        case '*':
-            Resetar();
             break;
         default:
             break;
@@ -232,7 +230,8 @@ void animacao_1(uint32_t valor_led, PIO pio, uint sm, double r, double g, double
     }
 }
 
-void animacao_2(uint32_t led_bin, PIO pio, uint sm){
+void animacao_2(uint32_t led_bin, PIO pio, uint sm)
+{
 
     // As matrizes devem ser vistas como conjuntos de 3 (RGB), e a animação tem 5 frames, o que totaliza 15 matrizes
     double animacao[15][NUM_PIXELS] = {
@@ -324,20 +323,20 @@ void animacao_2(uint32_t led_bin, PIO pio, uint sm){
          0.0, 0.0, 0.3, 0.0, 0.0,
          0.0, 0.3, 0.4, 0.3, 0.0,
          0.0, 0.0, 0.4, 0.0, 0.6,
-         0.0, 0.0, 0.5, 0.0, 0.0}
-    };
+         0.0, 0.0, 0.5, 0.0, 0.0}};
 
-    for (int frame = 0; frame < 15; frame += 3) {  // Iteração de frames
-        for (int16_t i = 0; i < NUM_PIXELS; i++) {    // Iteração de pixels
+    for (int frame = 0; frame < 15; frame += 3)
+    { // Iteração de frames
+        for (int16_t i = 0; i < NUM_PIXELS; i++)
+        { // Iteração de pixels
 
             led_bin = matrix_rgb(animacao[frame][24 - i], animacao[frame + 1][24 - i], animacao[frame + 2][24 - i]);
             pio_sm_put_blocking(pio, sm, led_bin);
-
         }
         imprimir_binario(led_bin);
-        sleep_ms(1000);  // 1 frame por segundo
+        sleep_ms(1000); // 1 frame por segundo
     }
-    sleep_ms(5000); // Mantém o frame final por 3 segundos
+    sleep_ms(5000);                      // Mantém o frame final por 3 segundos
     led_bin = matrix_rgb(0.0, 0.0, 0.0); // Apaga a imagem
     pio_sm_put_blocking(pio, sm, led_bin);
 }
@@ -368,15 +367,15 @@ void animacao_3(uint32_t valor_led, PIO pio, uint sm, double r, double g, double
          1.0, 1.0, 1.0, 1.0, 1.0,
          1.0, 0.0, 0.0, 0.0, 1.0,
          1.0, 0.0, 0.0, 0.0, 1.0},
-         
+
         {0.0, 0.0, 1.0, 0.0, 0.0, // Letra +
          0.0, 0.0, 1.0, 0.0, 0.0,
          1.0, 1.0, 1.0, 1.0, 1.0,
-         0.0, 0.0, 1.0, 0.0,0.0,
+         0.0, 0.0, 1.0, 0.0, 0.0,
          0.0, 0.0, 1.0, 0.0, 0.0}};
 
     for (int letra = 0; letra < 5; letra++)
-  {   // Itera sobre as letras
+    { // Itera sobre as letras
         for (int16_t i = 0; i < 25; i++)
         { // Itera sobre os pixels da matriz
             valor_led = matrix_rgb(letras[letra][24 - i], r = 0, g = 0.0);
@@ -389,77 +388,72 @@ void animacao_3(uint32_t valor_led, PIO pio, uint sm, double r, double g, double
 
 void animacao_4()
 {
-    
 }
-void animacao_5(uint32_t valor_led, PIO pio, uint sm, double r, double g, double b) {
+void animacao_5(uint32_t valor_led, PIO pio, uint sm, double r, double g, double b)
+{
     double animacaos[5][5][5][3] = { // Corrigido para ter a dimensão correta
-        { // Animação 1
-            {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
-            {{255, 255, 0}, {0, 0, 0}, {255, 255, 0}, {0, 0, 0}, {255, 255, 0}},
-            {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
-            {{255, 255, 0}, {255, 255, 255}, {255, 255, 255}, {255, 255, 255}, {255, 255, 0}}, 
-            {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}}
-        },
-        { // Animação 2
-            {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
-            {{255, 255, 0}, {0, 0, 0}, {255, 255, 0}, {0, 0, 0}, {255, 255, 0}},
-            {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
-            {{255, 255, 0}, {255, 255, 0}, {0, 0, 0}, {255, 255, 0}, {255, 255, 0}},
-            {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}}
-        },
-        { // Animação 3
-            {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
-            {{255, 255, 0}, {0, 0, 0}, {255, 255, 0}, {0, 0, 0}, {255, 255, 0}},
-            {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
-            {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
-            {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}}
-        }, 
-        { // Animação 4
-            {{255, 0, 0}, {255, 0, 0}, {255, 255, 0}, {255, 0, 0}, {255, 0, 0}},
-           {{255, 0, 0}, {255, 255, 0}, {255, 0, 0}, {255, 255, 0}, {255, 0, 0}},
-           {{255, 0, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 0, 0}},
-           {{255, 255, 0}, {255, 0, 0}, {255, 255, 0}, {255, 0, 0}, {255, 255, 0}},
-           {{255, 255, 0}, {255, 255, 0}, {255, 0, 0}, {255, 255, 0}, {255, 255, 0}}
-        },
+                                    {// Animação 1
+                                     {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
+                                     {{255, 255, 0}, {0, 0, 0}, {255, 255, 0}, {0, 0, 0}, {255, 255, 0}},
+                                     {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
+                                     {{255, 255, 0}, {255, 255, 255}, {255, 255, 255}, {255, 255, 255}, {255, 255, 0}},
+                                     {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}}},
+                                    {// Animação 2
+                                     {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
+                                     {{255, 255, 0}, {0, 0, 0}, {255, 255, 0}, {0, 0, 0}, {255, 255, 0}},
+                                     {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
+                                     {{255, 255, 0}, {255, 255, 0}, {0, 0, 0}, {255, 255, 0}, {255, 255, 0}},
+                                     {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}}},
+                                    {// Animação 3
+                                     {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
+                                     {{255, 255, 0}, {0, 0, 0}, {255, 255, 0}, {0, 0, 0}, {255, 255, 0}},
+                                     {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
+                                     {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
+                                     {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}}},
+                                    {// Animação 4
+                                     {{255, 0, 0}, {255, 0, 0}, {255, 255, 0}, {255, 0, 0}, {255, 0, 0}},
+                                     {{255, 0, 0}, {255, 255, 0}, {255, 0, 0}, {255, 255, 0}, {255, 0, 0}},
+                                     {{255, 0, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 0, 0}},
+                                     {{255, 255, 0}, {255, 0, 0}, {255, 255, 0}, {255, 0, 0}, {255, 255, 0}},
+                                     {{255, 255, 0}, {255, 255, 0}, {255, 0, 0}, {255, 255, 0}, {255, 255, 0}}},
 
-        { // Animação 5
-           {{255, 0, 0}, {255, 0, 0}, {0, 0, 0}, {255, 0, 0}, {255, 0, 0}},
-            {{255, 0, 0}, {0, 0, 0}, {255, 0, 0}, {0, 0, 0}, {255, 0, 0}},
-            {{255, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {255, 0, 0}},
-            {{0, 0, 0}, {255, 0, 0}, {0, 0, 0}, {255, 0, 0}, {0, 0, 0}},
-            {{0, 0, 0}, {0, 0, 0}, {255, 0, 0}, {0, 0, 0}, {0, 0, 0}}
-        }
-    };
+                                    {// Animação 5
+                                     {{255, 0, 0}, {255, 0, 0}, {0, 0, 0}, {255, 0, 0}, {255, 0, 0}},
+                                     {{255, 0, 0}, {0, 0, 0}, {255, 0, 0}, {0, 0, 0}, {255, 0, 0}},
+                                     {{255, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {255, 0, 0}},
+                                     {{0, 0, 0}, {255, 0, 0}, {0, 0, 0}, {255, 0, 0}, {0, 0, 0}},
+                                     {{0, 0, 0}, {0, 0, 0}, {255, 0, 0}, {0, 0, 0}, {0, 0, 0}}}};
 
-    for (int animacao = 0; animacao < 5; animacao++) { // Corrigido para 5 animações
-        for (int coluna = 0; coluna < 5; coluna++) { 
-            for (int linha = 0; linha < 5; linha++) { 
+    for (int animacao = 0; animacao < 5; animacao++)
+    { // Corrigido para 5 animações
+        for (int coluna = 0; coluna < 5; coluna++)
+        {
+            for (int linha = 0; linha < 5; linha++)
+            {
                 valor_led = matrix_rgb(
-                    animacaos[animacao][linha][coluna][0] / 255.0, 
-                    animacaos[animacao][linha][coluna][1] / 255.0, 
-                    animacaos[animacao][linha][coluna][2] / 255.0
-                );
+                    animacaos[animacao][linha][coluna][0] / 255.0,
+                    animacaos[animacao][linha][coluna][1] / 255.0,
+                    animacaos[animacao][linha][coluna][2] / 255.0);
                 pio_sm_put_blocking(pio, sm, valor_led);
             }
         }
 
         imprimir_binario(valor_led); // Imprime o valor binário da animação exibida
-        sleep_ms(2000); // Espera 2 segundos antes da próxima animação
+        sleep_ms(2000);              // Espera 2 segundos antes da próxima animação
     }
 }
 
 void animacao_6()
 {
-   
 }
 void animacao_7(uint32_t valor_led, PIO pio, uint sm, double r, double g, double b)
 {
-    double letras[6][25] ={
+    double letras[6][25] = {
         {0.0, 0.0, 1.0, 0.0, 0.0,
-        0.0, 0.0, 1.0, 0.0, 0.0,
-        1.0, 1.0, 1.0, 1.0, 1.0,
-        0.0, 0.0, 1.0, 0.0, 0.0,
-        0.0, 0.0, 1.0, 0.0, 0.0},
+         0.0, 0.0, 1.0, 0.0, 0.0,
+         1.0, 1.0, 1.0, 1.0, 1.0,
+         0.0, 0.0, 1.0, 0.0, 0.0,
+         0.0, 0.0, 1.0, 0.0, 0.0},
 
         {0.0, 1.0, 1.0, 0.0, 0.0,
          0.0, 1.0, 1.0, 0.0, 0.0,
@@ -468,32 +462,31 @@ void animacao_7(uint32_t valor_led, PIO pio, uint sm, double r, double g, double
          0.0, 1.0, 1.0, 0.0, 0.0},
 
         {0.0, 0.0, 1.0, 1.0, 0.0,
-        0.0, 0.0, 1.0, 1.0, 0.0,
-        1.0, 1.0, 1.0, 1.0, 1.0,
-        0.0, 0.0, 1.0, 1.0, 0.0,
-        0.0, 0.0, 1.0, 1.0, 0.0},
+         0.0, 0.0, 1.0, 1.0, 0.0,
+         1.0, 1.0, 1.0, 1.0, 1.0,
+         0.0, 0.0, 1.0, 1.0, 0.0,
+         0.0, 0.0, 1.0, 1.0, 0.0},
 
         {0.0, 0.0, 1.0, 0.0, 0.0,
-        0.0, 0.0, 1.0, 0.0, 0.0,
-        1.0, 1.0, 1.0, 1.0, 1.0,
-        0.0, 0.0, 1.0, 0.0, 0.0,
-        0.0, 0.0, 1.0, 0.0, 0.0},
+         0.0, 0.0, 1.0, 0.0, 0.0,
+         1.0, 1.0, 1.0, 1.0, 1.0,
+         0.0, 0.0, 1.0, 0.0, 0.0,
+         0.0, 0.0, 1.0, 0.0, 0.0},
 
         {0.0, 1.0, 1.0, 0.0, 0.0,
-        0.0, 1.0, 1.0, 0.0, 0.0,
-        1.0, 1.0, 1.0, 1.0, 1.0,
-        0.0, 1.0, 1.0, 0.0, 0.0,
-        0.0, 1.0, 1.0, 0.0, 0.0},
+         0.0, 1.0, 1.0, 0.0, 0.0,
+         1.0, 1.0, 1.0, 1.0, 1.0,
+         0.0, 1.0, 1.0, 0.0, 0.0,
+         0.0, 1.0, 1.0, 0.0, 0.0},
 
         {0.0, 0.0, 1.0, 1.0, 0.0,
-        0.0, 0.0, 1.0, 1.0, 0.0,
-        1.0, 1.0, 1.0, 1.0, 1.0,
-        0.0, 0.0, 1.0, 1.0, 0.0,
-        0.0, 0.0, 1.0, 1.0, 0.0}};
-
+         0.0, 0.0, 1.0, 1.0, 0.0,
+         1.0, 1.0, 1.0, 1.0, 1.0,
+         0.0, 0.0, 1.0, 1.0, 0.0,
+         0.0, 0.0, 1.0, 1.0, 0.0}};
 
     for (int letra = 0; letra < 6; letra++)
-  {   // Itera sobre as letras
+    { // Itera sobre as letras
         for (int16_t i = 0; i < 25; i++)
         { // Itera sobre os pixels da matriz
             valor_led = matrix_rgb(letras[letra][24 - i], r = 0, g = 0.0);
@@ -586,7 +579,4 @@ void all_led_branco_20(uint32_t valor_led, PIO pio, uint sm, double r, double g,
     imprimir_binario(valor_led);
 
     sleep_ms(500);
-}
-static void Resetar(){
-    reset_usb_boot(0,0);
 }
