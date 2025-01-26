@@ -12,6 +12,8 @@
 #define column 4
 #define NUM_PIXELS 25
 #define OUT_PIN 7
+#define pino_buzzer 21
+
 
 const uint rowPin[row] = {8, 9, 6, 5};
 const uint columnPin[column] = {4, 3, 2, 1};
@@ -47,7 +49,7 @@ void imprimir_binario(int num)
     }
 }
 
-uint32_t matrix_rgb(double b, double r, double g)
+uint32_t matrix_rgb(double r, double b, double g)
 {
     unsigned char R, G, B;
     R = r * 255;
@@ -71,7 +73,6 @@ int main()
     uint sm = pio_claim_unused_sm(pio, true);
 
     pio_matrix_program_init(pio, sm, offset, OUT_PIN);
-
     while (true)
     {
         char tecla = ler_teclado_matricial();
@@ -136,6 +137,9 @@ void inicializar_pinos()
         gpio_set_dir(columnPin[j], GPIO_IN);
         gpio_pull_up(columnPin[j]);
     }
+    gpio_init(pino_buzzer);
+    gpio_set_dir(pino_buzzer, GPIO_OUT);
+    gpio_put(pino_buzzer, 0);
 }
 
 char ler_teclado_matricial()
@@ -161,11 +165,12 @@ char ler_teclado_matricial()
         gpio_put(rowPin[i], 1);
     }
 
-    return '\0'; // Retorna '\0' se nenhuma tecla for pressionada
+    return '\0';
 }
 
 void animacao_1(uint32_t valor_led, PIO pio, uint sm, double r, double g, double b)
 {
+    gpio_put(pino_buzzer, true);
     double letras[7][25] = {
         {1.0, 1.0, 1.0, 1.0, 1.0,
          0.0, 0.0, 0.0, 0.0, 1.0,
@@ -215,6 +220,7 @@ void animacao_1(uint32_t valor_led, PIO pio, uint sm, double r, double g, double
         {
             valor_led = matrix_rgb(letras[letra][24 - i], r = 0, g = 0.0);
             pio_sm_put_blocking(pio, sm, valor_led);
+            
         }
         imprimir_binario(valor_led);
         sleep_ms(2000);
@@ -549,7 +555,7 @@ void all_led_azul_100(uint32_t valor_led, PIO pio, uint sm, double r, double g, 
 
     for (int16_t i = 0; i < NUM_PIXELS; i++)
     {
-        valor_led = matrix_rgb(desenho[24 - i], r = 0, g = 0.0);
+        valor_led = matrix_rgb(r=0, desenho[24 - i], g = 0.0);
         pio_sm_put_blocking(pio, sm, valor_led);
     }
     imprimir_binario(valor_led);
@@ -565,7 +571,7 @@ void all_led_vermelho_80(uint32_t valor_led, PIO pio, uint sm, double r, double 
 
     for (int16_t i = 0; i < NUM_PIXELS; i++)
     {
-        valor_led = matrix_rgb(b = 0.0, desenho[24 - i], g = 0.0);
+        valor_led = matrix_rgb(desenho[24 - i], b=0, g = 0.0);
         pio_sm_put_blocking(pio, sm, valor_led);
     }
     imprimir_binario(valor_led);
@@ -580,7 +586,7 @@ void all_led_verde_50(uint32_t valor_led, PIO pio, uint sm, double r, double g, 
                           0.5, 0.5, 0.5, 0.5, 0.5};
     for (int16_t i = 0; i < NUM_PIXELS; i++)
     {
-        valor_led = matrix_rgb(b = 0.0, r = 00, desenho[24 - i]);
+        valor_led = matrix_rgb(r = 0.0, b = 00, desenho[24 - i]);
         pio_sm_put_blocking(pio, sm, valor_led);
     }
     imprimir_binario(valor_led);
