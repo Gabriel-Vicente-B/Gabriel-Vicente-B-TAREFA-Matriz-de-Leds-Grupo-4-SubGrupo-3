@@ -355,10 +355,10 @@ void animacao_5(uint32_t valor_led, PIO pio, uint sm, double r, double g, double
             }
         }
 
-        // Imprime o valor binário da letra exibida
+        // Imprime o valor binário da animação exibida
         imprimir_binario(valor_led);
 
-        // Espera 2 segundos antes de mostrar a próxima letra
+        // Espera 2 segundos antes de mostrar a proxima animaçao
         sleep_ms(2000);
     }
 
