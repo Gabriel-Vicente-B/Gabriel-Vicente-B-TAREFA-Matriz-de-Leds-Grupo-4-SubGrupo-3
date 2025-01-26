@@ -8,7 +8,6 @@
 #include "pico/bootrom.h"
 #include "pio_matrix.pio.h"
 
-
 // Definição do número de linhas e colunas do teclado matricial
 #define row 4
 #define column 4
@@ -26,12 +25,11 @@ const char TecladoMatricial[row][column] = {
     {'1', '2', '3', 'A'},
     {'4', '5', '6', 'B'},
     {'7', '8', '9', 'C'},
-    {'*', '0', '#', 'D'}
-};
+    {'*', '0', '#', 'D'}};
 
 void inicializar_pinos();
 char ler_teclado_matricial();
-void animacao_1(uint32_t valor_led, PIO pio,uint sm,double r,double g,double b);
+void animacao_1(uint32_t valor_led, PIO pio, uint sm, double r, double g, double b);
 void animacao_2();
 void animacao_3(uint32_t valor_led, PIO pio, uint sm, double r, double g, double b);
 void animacao_4();
@@ -43,240 +41,235 @@ void all_led_azul_100();
 void all_led_vermelho_80();
 void all_led_verde_50();
 void all_led_branco_20();
-//vetor para criar imagem na matriz de led 5X5 - 2
-void imprimir_binario(int num) {
- int i;
- for (i = 31; i >= 0; i--) {
-  (num & (1 << i)) ? printf("1") : printf("0");
- }
+// vetor para criar imagem na matriz de led 5X5 - 2
+void imprimir_binario(int num)
+{
+    int i;
+    for (i = 31; i >= 0; i--)
+    {
+        (num & (1 << i)) ? printf("1") : printf("0");
+    }
 }
 
 uint32_t matrix_rgb(double b, double r, double g)
 {
-  unsigned char R, G, B;
-  R = r * 255;
-  G = g * 255;
-  B = b * 255;
-  return (G << 24) | (R << 16) | (B << 8);
+    unsigned char R, G, B;
+    R = r * 255;
+    G = g * 255;
+    B = b * 255;
+    return (G << 24) | (R << 16) | (B << 8);
 }
 int main()
 {
     int x;
     inicializar_pinos();
-    PIO pio = pio0; 
-    bool ok;    
+    PIO pio = pio0;
+    bool ok;
     uint32_t valor_led;
-    double r = 0.0, b = 0.0 , g = 0.0;
+    double r = 0.0, b = 0.0, g = 0.0;
     ok = set_sys_clock_khz(128000, false);
     stdio_init_all();
-    if (ok) printf("clock set to %ld\n", clock_get_hz(clk_sys));
+    if (ok)
+        printf("clock set to %ld\n", clock_get_hz(clk_sys));
 
     uint offset = pio_add_program(pio, &pio_matrix_program);
     uint sm = pio_claim_unused_sm(pio, true);
     pio_matrix_program_init(pio, sm, offset, OUT_PIN);
-    
-    all_led_azul_100(valor_led,pio,sm,r,g,b);
 
-        while (true) {
+    all_led_azul_100(valor_led, pio, sm, r, g, b);
+
+    while (true)
+    {
         char tecla = ler_teclado_matricial();
-        switch (tecla){
-            case '1':
-                animacao_1(valor_led,pio,sm,r,g,b);
-                break;
-            case '2':
-                animacao_2();
-                break;
-            case '3':
-                animacao_3(valor_led, pio, sm, r, g, b);
-                break;
-            case '4':
-                animacao_4();
-                break;
-            case '5':
-                animacao_5();
-                break;
-            case '6':
-                animacao_6();
-                break;
-            case '7':
-                animacao_7();
-                break;
-            case 'A':
-                desligar_leds(valor_led,pio,sm,r,g,b);
-                break;
-            case 'B':
-                all_led_azul_100(valor_led,pio,sm,r,g,b);
-                break;
-            case 'C':
-                all_led_vermelho_80(valor_led,pio,sm,r,g,b);
-                break;
-            case 'D':
-                all_led_verde_50(valor_led,pio,sm,r,g,b);
-                break;
-            case '#':
-                all_led_branco_20(valor_led,pio,sm,r,g,b);
-                break;
-            default:
-                break;
+        switch (tecla)
+        {
+        case '1':
+            animacao_1(valor_led, pio, sm, r, g, b);
+            break;
+        case '2':
+            animacao_2();
+            break;
+        case '3':
+            animacao_3(valor_led, pio, sm, r, g, b);
+            break;
+        case '4':
+            animacao_4();
+            break;
+        case '5':
+            animacao_5();
+            break;
+        case '6':
+            animacao_6();
+            break;
+        case '7':
+            animacao_7();
+            break;
+        case 'A':
+            desligar_leds(valor_led, pio, sm, r, g, b);
+            break;
+        case 'B':
+            all_led_azul_100(valor_led, pio, sm, r, g, b);
+            break;
+        case 'C':
+            all_led_vermelho_80(valor_led, pio, sm, r, g, b);
+            break;
+        case 'D':
+            all_led_verde_50(valor_led, pio, sm, r, g, b);
+            break;
+        case '#':
+            all_led_branco_20(valor_led, pio, sm, r, g, b);
+            break;
+        default:
+            break;
         }
-
+    }
 }
 
-}
-
-void inicializar_pinos(){
+void inicializar_pinos()
+{
     // Inicializa os pinos GPIO das linhas
-    for (int i = 0; i < row; i++) {
+    for (int i = 0; i < row; i++)
+    {
         gpio_init(rowPin[i]);
         gpio_set_dir(rowPin[i], GPIO_OUT);
         gpio_put(rowPin[i], 0); // Na inicialização, os pinos estarão em low
     }
 
     // Inicializa os pinos GPIO das colunas
-    for (int j = 0; j < column; j++) {
-    gpio_init(columnPin[j]);
-    gpio_set_dir(columnPin[j], GPIO_IN);
-    gpio_pull_up(columnPin[j]);  // Ativa pull-up
+    for (int j = 0; j < column; j++)
+    {
+        gpio_init(columnPin[j]);
+        gpio_set_dir(columnPin[j], GPIO_IN);
+        gpio_pull_up(columnPin[j]); // Ativa pull-up
     }
 }
 
-char ler_teclado_matricial() {
-    for (int i = 0; i < row; i++) {
-        gpio_put(rowPin[i], 0);  // Ativa a linha atual (nível baixo)
+char ler_teclado_matricial()
+{
+    for (int i = 0; i < row; i++)
+    {
+        gpio_put(rowPin[i], 0); // Ativa a linha atual (nível baixo)
 
-        for (int j = 0; j < column; j++) {
+        for (int j = 0; j < column; j++)
+        {
             // Verifica se o botão foi pressionado
-            if (!gpio_get(columnPin[j])) {  // Detecta nível baixo (tecla pressionada)
-                sleep_ms(50);  // Aguarda para debounce
-                if (!gpio_get(columnPin[j])) {  // Confirma a tecla pressionada
-                    while (!gpio_get(columnPin[j])) {
+            if (!gpio_get(columnPin[j]))
+            {                 // Detecta nível baixo (tecla pressionada)
+                sleep_ms(50); // Aguarda para debounce
+                if (!gpio_get(columnPin[j]))
+                { // Confirma a tecla pressionada
+                    while (!gpio_get(columnPin[j]))
+                    {
                         // Aguarda a tecla ser solta
                     }
-                    gpio_put(rowPin[i], 1);  // Desativa a linha
-                    return TecladoMatricial[i][j];  // Retorna o caractere pressionado
+                    gpio_put(rowPin[i], 1);        // Desativa a linha
+                    return TecladoMatricial[i][j]; // Retorna o caractere pressionado
                 }
             }
         }
 
-        gpio_put(rowPin[i], 1);  // Desativa a linha após a verificação
+        gpio_put(rowPin[i], 1); // Desativa a linha após a verificação
     }
 
-    return '\0';  // Retorna '\0' se nenhuma tecla for pressionada
+    return '\0'; // Retorna '\0' se nenhuma tecla for pressionada
 }
 
-void animacao_1(uint32_t valor_led, PIO pio,uint sm,double r,double g,double b){
-double letras[7][25] = {
-    {1.0, 1.0, 1.0, 1.0, 1.0,  // Letra E
-     0.0, 0.0, 0.0, 0.0, 1.0, 
-     1.0, 1.0, 1.0, 1.0, 1.0,
-     0.0, 0.0, 0.0, 0.0, 1.0,
-     1.0, 1.0, 1.0, 1.0, 1.0},
-
-    {1.0, 0.0, 0.0, 0.0, 1.0,  // Letra M
-     1.0, 1.0, 0.0, 1.0, 1.0,
-     1.0, 0.0, 1.0, 0.0, 1.0,
-     1.0, 0.0, 0.0, 0.0, 1.0,
-     1.0, 0.0, 0.0, 0.0, 1.0},
-
-    {1.0, 1.0, 1.0, 1.0, 0.0,  // Letra B
-     1.0, 0.0, 0.0, 0.0, 1.0,
-     1.0, 1.0, 1.0, 1.0, 0.0,
-     1.0, 0.0, 0.0, 0.0, 1.0,
-     1.0, 1.0, 1.0, 1.0, 0.0},
-
-    {0.0, 1.0, 1.0, 1.0, 0.0,  // Letra A
-     1.0, 0.0, 0.0, 0.0, 1.0,
-     1.0, 1.0, 1.0, 1.0, 1.0,
-     1.0, 0.0, 0.0, 0.0, 1.0,
-     1.0, 0.0, 0.0, 0.0, 1.0},
-
-    {1.0, 1.0, 1.0, 1.0, 0.0,  // Letra R
-     1.0, 0.0, 0.0, 0.0, 1.0,
-     1.0, 1.0, 1.0, 1.0, 0.0,
-     0.0, 0.0, 1.0, 0.0, 1.0,
-     1.0, 0.0, 0.0, 1.0, 0.0},
-
-    {0.0, 1.0, 1.0, 1.0, 0.0,  // Letra C
-     1.0, 0.0, 0.0, 0.0, 1.0,
-     1.0, 0.0, 0.0, 0.0, 0.0,
-     1.0, 0.0, 0.0, 0.0, 1.0,
-     0.0, 1.0, 1.0, 1.0, 0.0},
-
-    {0.0, 1.0, 1.0, 1.0, 0.0,  // Letra A (repetida)
-     1.0, 0.0, 0.0, 0.0, 1.0,
-     1.0, 1.0, 1.0, 1.0, 1.0,
-     1.0, 0.0, 0.0, 0.0, 1.0,
-     1.0, 0.0, 0.0, 0.0, 1.0}
-};
-
-for (int letra = 0; letra < 7; letra++) {  // Itera sobre as letras
-    for (int16_t i = 0; i < 25; i++) {    // Itera sobre os pixels da matriz
-        valor_led = matrix_rgb(letras[letra][24 - i], r = 0, g = 0.0);
-        pio_sm_put_blocking(pio, sm, valor_led);
-    }
-    imprimir_binario(valor_led);
-    sleep_ms(2000);  // Aguarda 5 segundos antes de mostrar a próxima letra
-}
-
-}
-void animacao_2(){
-
-
-    
-}
-void animacao_3(uint32_t valor_led, PIO pio, uint sm, double r, double g, double b) {
+void animacao_1(uint32_t valor_led, PIO pio, uint sm, double r, double g, double b)
+{
     double letras[7][25] = {
-        {1.0, 1.0, 1.0, 1.0, 1.0,  // Letra E
-         0.0, 0.0, 0.0, 0.0, 1.0, 
+        {1.0, 1.0, 1.0, 1.0, 1.0, // Letra E
+         0.0, 0.0, 0.0, 0.0, 1.0,
          1.0, 1.0, 1.0, 1.0, 1.0,
          0.0, 0.0, 0.0, 0.0, 1.0,
          1.0, 1.0, 1.0, 1.0, 1.0},
 
-        {1.0, 0.0, 0.0, 0.0, 1.0,  // Letra M
+        {1.0, 0.0, 0.0, 0.0, 1.0, // Letra M
          1.0, 1.0, 0.0, 1.0, 1.0,
          1.0, 0.0, 1.0, 0.0, 1.0,
          1.0, 0.0, 0.0, 0.0, 1.0,
          1.0, 0.0, 0.0, 0.0, 1.0},
 
-        {1.0, 1.0, 1.0, 1.0, 0.0,  // Letra B
+        {1.0, 1.0, 1.0, 1.0, 0.0, // Letra B
          1.0, 0.0, 0.0, 0.0, 1.0,
          1.0, 1.0, 1.0, 1.0, 0.0,
          1.0, 0.0, 0.0, 0.0, 1.0,
          1.0, 1.0, 1.0, 1.0, 0.0},
 
-        {0.0, 1.0, 1.0, 1.0, 0.0,  // Letra A
+        {0.0, 1.0, 1.0, 1.0, 0.0, // Letra A
          1.0, 0.0, 0.0, 0.0, 1.0,
          1.0, 1.0, 1.0, 1.0, 1.0,
          1.0, 0.0, 0.0, 0.0, 1.0,
          1.0, 0.0, 0.0, 0.0, 1.0},
 
-        {1.0, 1.0, 1.0, 1.0, 0.0,  // Letra R
+        {1.0, 1.0, 1.0, 1.0, 0.0, // Letra R
          1.0, 0.0, 0.0, 0.0, 1.0,
          1.0, 1.0, 1.0, 1.0, 0.0,
          0.0, 0.0, 1.0, 0.0, 1.0,
          1.0, 0.0, 0.0, 1.0, 0.0},
 
-        {0.0, 1.0, 1.0, 1.0, 0.0,  // Letra C
+        {0.0, 1.0, 1.0, 1.0, 0.0, // Letra C
          1.0, 0.0, 0.0, 0.0, 1.0,
          1.0, 0.0, 0.0, 0.0, 0.0,
          1.0, 0.0, 0.0, 0.0, 1.0,
          0.0, 1.0, 1.0, 1.0, 0.0},
 
-        {0.0, 1.0, 1.0, 1.0, 0.0,  // Letra A (repetida)
+        {0.0, 1.0, 1.0, 1.0, 0.0, // Letra A (repetida)
          1.0, 0.0, 0.0, 0.0, 1.0,
          1.0, 1.0, 1.0, 1.0, 1.0,
          1.0, 0.0, 0.0, 0.0, 1.0,
-         1.0, 0.0, 0.0, 0.0, 1.0}
-    };
+         1.0, 0.0, 0.0, 0.0, 1.0}};
 
-    for (int letra = 0; letra < 7; letra++) { // Itera sobre as letras
-        for (int coluna = 0; coluna < 5; coluna++) { // Colunas de cada letra
-            for (int linha = 0; linha < 5; linha++) { // Linhas de cada letra
+    for (int letra = 0; letra < 7; letra++)
+    { // Itera sobre as letras
+        for (int16_t i = 0; i < 25; i++)
+        { // Itera sobre os pixels da matriz
+            valor_led = matrix_rgb(letras[letra][24 - i], r = 0, g = 0.0);
+            pio_sm_put_blocking(pio, sm, valor_led);
+        }
+        imprimir_binario(valor_led);
+        sleep_ms(2000); // Aguarda 5 segundos antes de mostrar a próxima letra
+    }
+}
+void animacao_2()
+{
+   }
+void animacao_3(uint32_t valor_led, PIO pio, uint sm, double r, double g, double b)
+{
+    double letras[4][25] = {
+        {1.0, 1.0, 1.0, 1.0, 1.0, // Letra T
+         0.0, 0.0, 1.0, 0.0, 0.0,
+         0.0, 0.0, 1.0, 0.0, 0.0,
+         0.0, 0.0, 1.0, 0.0, 0.0,
+         0.0, 0.0, 1.0, 0.0, 0.0},
+
+        {1.0, 0.0, 0.0, 0.0, 1.0, // Letra E
+         1.0, 0.0, 0.0, 0.0, 0.0,
+         1.0, 1.0, 1.0, 1.0, 0.0,
+         1.0, 0.0, 0.0, 0.0, 0.0,
+         1.0, 0.0, 0.0, 0.0, 1.0},
+
+        {1.0, 0.0, 0.0, 0.0, 1.0, // Letra C
+         1.0, 0.0, 0.0, 0.0, 0.0,
+         1.0, 0.0, 0.0, 0.0, 0.0,
+         1.0, 0.0, 0.0, 0.0, 0.0,
+         1.0, 0.0, 0.0, 0.0, 1.0},
+
+        {1.0, 0.0, 0.0, 0.0, 1.0, // Letra H
+         1.0, 0.0, 0.0, 0.0, 1.0,
+         1.0, 1.0, 1.0, 1.0, 1.0,
+         1.0, 0.0, 0.0, 0.0, 1.0,
+         1.0, 0.0, 0.0, 0.0, 1.0}};
+
+    for (int letra = 0; letra < 4; letra++)
+    { // Itera sobre as letras
+        for (int coluna = 0; coluna < 5; coluna++)
+        { // Colunas de cada letra
+            for (int linha = 0; linha < 5; linha++)
+            { // Linhas de cada letra
                 valor_led = matrix_rgb(
-                    letras[letra][linha * 5 + coluna] * b, 
-                    letras[letra][linha * 5 + coluna] * r, 
-                    letras[letra][linha * 5 + coluna] * g
-                );
+                    letras[letra][linha * 5 + coluna] * b,
+                    letras[letra][linha * 5 + coluna] * r,
+                    letras[letra][linha * 5 + coluna] * g);
                 pio_sm_put_blocking(pio, sm, valor_led);
             }
         }
@@ -289,100 +282,103 @@ void animacao_3(uint32_t valor_led, PIO pio, uint sm, double r, double g, double
     }
 }
 
-void animacao_4(){
-
-
+void animacao_4()
+{
     
 }
-void animacao_5(){
+void animacao_5()
+{
+    
 }
-  void animacao_6(){
-
+void animacao_6()
+{
    
 }
-void animacao_7(){
-
-
-    
+void animacao_7()
+{
+         
 }
-void desligar_leds(uint32_t valor_led, PIO pio,uint sm,double r,double g,double b){
-    for (int16_t i = 0; i < NUM_PIXELS; i++) {
+void desligar_leds(uint32_t valor_led, PIO pio, uint sm, double r, double g, double b)
+{
+    for (int16_t i = 0; i < NUM_PIXELS; i++)
+    {
 
-            valor_led = matrix_rgb(b=0, r=0, g=0.0);
-            pio_sm_put_blocking(pio, sm, valor_led);
+        valor_led = matrix_rgb(b = 0, r = 0, g = 0.0);
+        pio_sm_put_blocking(pio, sm, valor_led);
+    }
+    imprimir_binario(valor_led);
+}
+void all_led_azul_100(uint32_t valor_led, PIO pio, uint sm, double r, double g, double b)
+{
+
+    double desenho[25] = {1.0, 1.0, 1.0, 1.0, 1.0,
+                          1.0, 1.0, 1.0, 1.0, 1.0,
+                          1.0, 1.0, 1.0, 1.0, 1.0,
+                          1.0, 1.0, 1.0, 1.0, 1.0,
+                          1.0, 1.0, 1.0, 1.0, 1.0};
+
+    for (int16_t i = 0; i < NUM_PIXELS; i++)
+    {
+
+        valor_led = matrix_rgb(desenho[24 - i], r = 0, g = 0.0);
+        pio_sm_put_blocking(pio, sm, valor_led);
     }
     imprimir_binario(valor_led);
 
-    
-}
-void all_led_azul_100(uint32_t valor_led, PIO pio,uint sm,double r,double g,double b){
-
-    double desenho[25] =   {1.0, 1.0, 1.0, 1.0, 1.0,
-                            1.0, 1.0, 1.0, 1.0, 1.0, 
-                            1.0, 1.0, 1.0, 1.0, 1.0,
-                            1.0, 1.0, 1.0, 1.0,1.0,
-                            1.0,1.0, 1.0, 1.0, 1.0};
-
-    for (int16_t i = 0; i < NUM_PIXELS; i++) {
-
-            valor_led = matrix_rgb(desenho[24-i], r=0, g=0.0);
-            pio_sm_put_blocking(pio, sm, valor_led);
-    }
-    imprimir_binario(valor_led);
-    
     sleep_ms(500);
-
-    
 }
-void all_led_vermelho_80(uint32_t valor_led, PIO pio,uint sm,double r,double g,double b){
+void all_led_vermelho_80(uint32_t valor_led, PIO pio, uint sm, double r, double g, double b)
+{
 
-    double desenho[25] =   {0.8, 0.8, 0.8, 0.8, 0.8,
-                            0.8, 0.8, 0.8, 0.8,0.8, 
-                            0.8, 0.8, 0.8, 0.8, 0.8,
-                            0.8, 0.8, 0.8, 0.8,0.8,
-                            0.8,0.8, 0.8, 0.8, 0.8};
+    double desenho[25] = {0.8, 0.8, 0.8, 0.8, 0.8,
+                          0.8, 0.8, 0.8, 0.8, 0.8,
+                          0.8, 0.8, 0.8, 0.8, 0.8,
+                          0.8, 0.8, 0.8, 0.8, 0.8,
+                          0.8, 0.8, 0.8, 0.8, 0.8};
 
-    for (int16_t i = 0; i < NUM_PIXELS; i++) {
+    for (int16_t i = 0; i < NUM_PIXELS; i++)
+    {
 
-            valor_led = matrix_rgb(b=0.0,desenho[24-i], g=0.0);
-            pio_sm_put_blocking(pio, sm, valor_led);
+        valor_led = matrix_rgb(b = 0.0, desenho[24 - i], g = 0.0);
+        pio_sm_put_blocking(pio, sm, valor_led);
     }
     imprimir_binario(valor_led);
-    
+
     sleep_ms(500);
-    
 }
-void all_led_verde_50(uint32_t valor_led, PIO pio,uint sm,double r,double g,double b){
-    double desenho[25] =   {0.5, 0.5,0.5, 0.5, 0.5,
-                            0.5, 0.5, 0.5, 0.5,0.5, 
-                            0.5, 0.5, 0.5, 0.5, 0.5,
-                            0.5,0.5, 0.5, 0.5,0.5,
-                            0.5,0.5, 0.5, 0.5, 0.5};
+void all_led_verde_50(uint32_t valor_led, PIO pio, uint sm, double r, double g, double b)
+{
+    double desenho[25] = {0.5, 0.5, 0.5, 0.5, 0.5,
+                          0.5, 0.5, 0.5, 0.5, 0.5,
+                          0.5, 0.5, 0.5, 0.5, 0.5,
+                          0.5, 0.5, 0.5, 0.5, 0.5,
+                          0.5, 0.5, 0.5, 0.5, 0.5};
 
-    for (int16_t i = 0; i < NUM_PIXELS; i++) {
+    for (int16_t i = 0; i < NUM_PIXELS; i++)
+    {
 
-            valor_led = matrix_rgb(b=0.0,r=00, desenho[24-i]);
-            pio_sm_put_blocking(pio, sm, valor_led);
+        valor_led = matrix_rgb(b = 0.0, r = 00, desenho[24 - i]);
+        pio_sm_put_blocking(pio, sm, valor_led);
     }
     imprimir_binario(valor_led);
-    
+
     sleep_ms(500);
-
-    
 }
-void all_led_branco_20(uint32_t valor_led, PIO pio,uint sm,double r,double g,double b){
-    double desenho[25] =   {0.2,0.2, 0.2,0.2,0.2,
-                            0.2,0.2,0.2,0.2,0.2, 
-                            0.2, 0.2,0.2,0.2, 0.2,
-                            0.2,0.2,0.2,0.2,0.2,
-                            0.2,0.2,0.2,0.2, 0.2};
+void all_led_branco_20(uint32_t valor_led, PIO pio, uint sm, double r, double g, double b)
+{
+    double desenho[25] = {0.2, 0.2, 0.2, 0.2, 0.2,
+                          0.2, 0.2, 0.2, 0.2, 0.2,
+                          0.2, 0.2, 0.2, 0.2, 0.2,
+                          0.2, 0.2, 0.2, 0.2, 0.2,
+                          0.2, 0.2, 0.2, 0.2, 0.2};
 
-    for (int16_t i = 0; i < NUM_PIXELS; i++) {
+    for (int16_t i = 0; i < NUM_PIXELS; i++)
+    {
 
-            valor_led = matrix_rgb(desenho[24-i],desenho[24-i],desenho[24-i]);
-            pio_sm_put_blocking(pio, sm, valor_led);
+        valor_led = matrix_rgb(desenho[24 - i], desenho[24 - i], desenho[24 - i]);
+        pio_sm_put_blocking(pio, sm, valor_led);
     }
     imprimir_binario(valor_led);
-    
+
     sleep_ms(500);
 }
