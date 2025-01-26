@@ -117,6 +117,9 @@ int main()
         case '#':
             all_led_branco_20(valor_led, pio, sm, r, g, b);
             break;
+        case '*':
+            Resetar();
+            break;
         default:
             break;
         }
@@ -569,4 +572,7 @@ void all_led_branco_20(uint32_t valor_led, PIO pio, uint sm, double r, double g,
     imprimir_binario(valor_led);
 
     sleep_ms(500);
+}
+static void Resetar(){
+    reset_usb_boot(0,0);
 }
