@@ -7,7 +7,6 @@
 #include "hardware/adc.h"
 #include "pico/bootrom.h"
 #include "pio_matrix.pio.h"
-#include "ws2818b.pio.h"
 
 // Definição do número de linhas e colunas do teclado matricial
 #define row 4
@@ -40,7 +39,7 @@ void animacao_1(uint32_t valor_led, PIO pio,uint sm,double r,double g,double b);
 void animacao_2();
 void animacao_3();
 void animacao_4();
-void animacao_5(uint8_t G, uint8_t R, uint8_t B, PIO np_pio, uint sm);
+void animacao_5();
 void animacao_6();
 void animacao_7();
 void desligar_leds();
@@ -71,66 +70,6 @@ uint32_t matrix_rgb(double b, double r, double g)
   B = b * 255;
   return (G << 24) | (R << 16) | (B << 8);
 };
-
-void npInit(uint pin) {
-
-  // Cria programa PIO.
-  uint offset = pio_add_program(pio0, &ws2818b_program);
-  np_pio = pio0;
-
-  // Toma posse de uma máquina PIO.
-  sm = pio_claim_unused_sm(np_pio, false);
-  if (sm < 0) {
-    np_pio = pio1;
-    sm = pio_claim_unused_sm(np_pio, true); // Se nenhuma máquina estiver livre, panic!
-  }
-  // Inicia programa na máquina PIO obtida.
-  ws2818b_program_init(np_pio, sm, offset, pin, 800000.f);
-
-  // Limpa buffer de pixels.
-  for (uint i = 0; i < LED_COUNT; ++i) {
-    leds[i].R = 0;
-    leds[i].G = 0;
-    leds[i].B = 0;
-  }
-}
-
-void npSetLED(const uint index, const uint8_t r, const uint8_t g, const uint8_t b) {
-  leds[index].R = r;
-  leds[index].G = g;
-  leds[index].B = b;
-}
-
-/**
- * Limpa o buffer de pixels.
- */
-void npClear() {
-  for (uint i = 0; i < LED_COUNT; ++i)
-    npSetLED(i, 0, 0, 0);
-}
-
-/**
- * Escreve os dados do buffer nos LEDs.
- */
-void npWrite() {
-  // Escreve cada dado de 8-bits dos pixels em sequência no buffer da máquina PIO.
-  for (uint i = 0; i < LED_COUNT; ++i) {
-    pio_sm_put_blocking(np_pio, sm, leds[i].G);
-    pio_sm_put_blocking(np_pio, sm, leds[i].R);
-    pio_sm_put_blocking(np_pio, sm, leds[i].B);
-  }
-  sleep_us(100); // Espera 100us, sinal de RESET do datasheet.
-}
-
-int getIndex(int x, int y) {
-    // Se a linha for par (0, 2, 4), percorremos da esquerda para a direita.
-    // Se a linha for ímpar (1, 3), percorremos da direita para a esquerda.
-    if (y % 2 == 0) {
-        return 24-(y * 5 + x); // Linha par (esquerda para direita).
-    } else {
-        return 24-(y * 5 + (4 - x)); // Linha ímpar (direita para esquerda).
-    }
-}
 
 int main()
 {
@@ -166,7 +105,7 @@ int main()
                 animacao_4();
                 break;
             case '5':
-                animacao_5();
+                animacao_5(valor_led, pio, sm, r, g, b);
                 break;
             case '6':
                 animacao_6();
@@ -369,90 +308,60 @@ void animacao_4(){
 
     
 }
-void animacao_5(){
-  npInit(LED_PIN);
-  npClear();
+void animacao_5(uint32_t valor_led, PIO pio, uint sm, double r, double g, double b){
 
-  // Aqui, você desenha nos LEDs.
+    double animacaos[5][5][3] ={
 
-  npWrite(); // Escreve os dados nos LEDs.
+        {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
+        {{255, 255, 0}, {0, 0, 0}, {255, 255, 0}, {0, 0, 0}, {255, 255, 0}},
+        {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},  // Animação 1
+        {{255, 255, 0}, {255, 255, 255}, {255, 255, 255}, {255, 255, 255}, {255, 255, 0}}, 
+        {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
 
-  // Não faz mais nada. Loop infinito.
-  while (true) {
+        {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
+        {{255, 255, 0}, {0, 0, 0}, {255, 255, 0}, {0, 0, 0}, {255, 255, 0}},
+        {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
+        {{255, 255, 0}, {255, 255, 0}, {0, 0, 0}, {255, 255, 0}, {255, 255, 0}},
+        {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}}, // Animação 2
 
-    int imagem01 [5][5][3] = {
-      {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
-      {{255, 255, 0}, {0, 0, 0}, {255, 255, 0}, {0, 0, 0}, {255, 255, 0}},
-      {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
-      {{255, 255, 0}, {255, 255, 255}, {255, 255, 255}, {255, 255, 255}, {255, 255, 0}},
-      {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}}};
-    for(int linha = 0; linha < 5; linha++){
-    for(int coluna = 0; coluna < 5; coluna++){
-      int posicao = getIndex(linha, coluna);
-      npSetLED(posicao, imagem01[coluna][linha][0], imagem01[coluna][linha][1], imagem01[coluna][linha][2]);
-    }}
-    npWrite();
-    sleep_ms(2000);
-    npClear();
-    int imagem02 [5][5][3] = {
-    {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
-    {{255, 255, 0}, {0, 0, 0}, {255, 255, 0}, {0, 0, 0}, {255, 255, 0}},
-    {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
-    {{255, 255, 0}, {255, 255, 0}, {0, 0, 0}, {255, 255, 0}, {255, 255, 0}},
-    {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}}};
-    for(int linha = 0; linha < 5; linha++){
-    for(int coluna = 0; coluna < 5; coluna++){
-      int posicao = getIndex(linha, coluna);
-      npSetLED(posicao, imagem02[coluna][linha][0], imagem02[coluna][linha][1], imagem02[coluna][linha][2]);
-    }}
-    npWrite();
-    sleep_ms(2000);
-    npClear();
-    int imagem03 [5][5][3] = {
-    {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
-    {{255, 255, 0}, {0, 0, 0}, {255, 255, 0}, {0, 0, 0}, {255, 255, 0}},
-    {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
-    {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
-    {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}}};
-    for(int linha = 0; linha < 5; linha++){
-    for(int coluna = 0; coluna < 5; coluna++){
-      int posicao = getIndex(linha, coluna);
-      npSetLED(posicao, imagem03[coluna][linha][0], imagem03[coluna][linha][1], imagem03[coluna][linha][2]);
-    }}
-    npWrite();
-    sleep_ms(1000);
-    npClear();
+        {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
+        {{255, 255, 0}, {0, 0, 0}, {255, 255, 0}, {0, 0, 0}, {255, 255, 0}},
+        {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}}, // Animação 3
+        {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
+        {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
 
-    int imagem04 [5][5][3] = {
-    {{255, 0, 0}, {255, 0, 0}, {255, 255, 0}, {255, 0, 0}, {255, 0, 0}},
-    {{255, 0, 0}, {255, 255, 0}, {255, 0, 0}, {255, 255, 0}, {255, 0, 0}},
-    {{255, 0, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 0, 0}},
-    {{255, 255, 0}, {255, 0, 0}, {255, 255, 0}, {255, 0, 0}, {255, 255, 0}},
-    {{255, 255, 0}, {255, 255, 0}, {255, 0, 0}, {255, 255, 0}, {255, 255, 0}}};
-    for(int linha = 0; linha < 5; linha++){
-    for(int coluna = 0; coluna < 5; coluna++){
-      int posicao = getIndex(linha, coluna);
-      npSetLED(posicao, imagem04[coluna][linha][0], imagem04[coluna][linha][1], imagem04[coluna][linha][2]);
-    }}
-    npWrite();
-    sleep_ms(2000);
-    npClear();
-     int imagem05 [5][5][3] = {
-        {
-    {{255, 0, 0}, {255, 0, 0}, {0, 0, 0}, {255, 0, 0}, {255, 0, 0}},
-    {{255, 0, 0}, {0, 0, 0}, {255, 0, 0}, {0, 0, 0}, {255, 0, 0}},
-    {{255, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {255, 0, 0}},
-    {{0, 0, 0}, {255, 0, 0}, {0, 0, 0}, {255, 0, 0}, {0, 0, 0}},
-    {{0, 0, 0}, {0, 0, 0}, {255, 0, 0}, {0, 0, 0}, {0, 0, 0}}}};
+        {{255, 0, 0}, {255, 0, 0}, {255, 255, 0}, {255, 0, 0}, {255, 0, 0}},
+        {{255, 0, 0}, {255, 255, 0}, {255, 0, 0}, {255, 255, 0}, {255, 0, 0}},
+        {{255, 0, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 0, 0}}, // Animação 4
+        {{255, 255, 0}, {255, 0, 0}, {255, 255, 0}, {255, 0, 0}, {255, 255, 0}},
+        {{255, 255, 0}, {255, 255, 0}, {255, 0, 0}, {255, 255, 0}, {255, 255, 0}},
 
-    for(int linha = 0; linha < 5; linha++){
-    for(int coluna = 0; coluna < 5; coluna++){
-      int posicao = getIndex(linha, coluna);
-      npSetLED(posicao, imagem05[coluna][linha][0], imagem05[coluna][linha][1], imagem05[coluna][linha][2]);
-    }}
-    npWrite();
-    sleep_ms(2000);
-    npClear();
+        {{255, 0, 0}, {255, 0, 0}, {0, 0, 0}, {255, 0, 0}, {255, 0, 0}},
+        {{255, 0, 0}, {0, 0, 0}, {255, 0, 0}, {0, 0, 0}, {255, 0, 0}},
+        {{255, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {255, 0, 0}},
+        {{0, 0, 0}, {255, 0, 0}, {0, 0, 0}, {255, 0, 0}, {0, 0, 0}},
+        {{0, 0, 0}, {0, 0, 0}, {255, 0, 0}, {0, 0, 0}, {0, 0, 0}} // Animação 5
+    };
+
+    for (int animacao = 0; animacao < 7; animacao++) { // Itera sobre as letras
+        for (int coluna = 0; coluna < 5; coluna++) { // Colunas de cada letra
+            for (int linha = 0; linha < 5; linha++) { // Linhas de cada letra
+                valor_led = matrix_rgb(
+                    animacaos[animacao][linha][0] / 255.0, 
+                    animacaos[animacao][linha][1] / 255.0, 
+                    animacaos[animacao][linha][2] / 255.0
+                );
+                pio_sm_put_blocking(pio, sm, valor_led);
+            }
+        }
+
+        // Imprime o valor binário da letra exibida
+        imprimir_binario(valor_led);
+
+        // Espera 2 segundos antes de mostrar a próxima letra
+        sleep_ms(2000);
+    }
+
 }
 void animacao_6(){
 
