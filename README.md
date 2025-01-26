@@ -8,7 +8,7 @@ Sua construção foi realizada a partir da divisão de sua implementação em pe
     O integrante Guilherme Pereira ficou responsável por confeccionar a animação "5" ;
     O integrante Gabriel Vicente ficou responsável por confeccionar a estrutura principal do codigo (Main), gerir o repositrio, criar as animações "1","B","C","D","#"e"*" e realizar os testes de funcionamento;
     O integrante Gustavo Lima ficou responsável por confeccionar a animação 6 e o arquivo diagram.JSON;
-    A integrante Mariana Campanati ficou responsável .
+    A integrante Mariana Campanati ficou responsável por confeccionar animação 7.
 
 A utilização do programa pode ser vista neste vídeo exemplo:
 
