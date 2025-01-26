@@ -28,12 +28,11 @@ const char TecladoMatricial[row][column] = {
     {'*', '0', '#', 'D'}
 };
 
-
 void inicializar_pinos();
 char ler_teclado_matricial();
 void animacao_1(uint32_t valor_led, PIO pio,uint sm,double r,double g,double b);
 void animacao_2();
-void animacao_3();
+void animacao_3(uint32_t valor_led, PIO pio, uint sm, double r, double g, double b);
 void animacao_4();
 void animacao_5();
 void animacao_6();
@@ -43,14 +42,7 @@ void all_led_azul_100();
 void all_led_vermelho_80();
 void all_led_verde_50();
 void all_led_branco_20();
-
-
-
-
 //vetor para criar imagem na matriz de led - 2
-
-
-
 void imprimir_binario(int num) {
  int i;
  for (i = 31; i >= 0; i--) {
@@ -66,12 +58,6 @@ uint32_t matrix_rgb(double b, double r, double g)
   B = b * 255;
   return (G << 24) | (R << 16) | (B << 8);
 }
-
-
-
-
-
-
 int main()
 {
     int x;
@@ -176,8 +162,6 @@ char ler_teclado_matricial() {
 
     return '\0';  // Retorna '\0' se nenhuma tecla for pressionada
 }
-
-
 
 void animacao_1(uint32_t valor_led, PIO pio,uint sm,double r,double g,double b){
 double letras[7][25] = {
