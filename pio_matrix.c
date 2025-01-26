@@ -324,7 +324,7 @@ void animacao_2(uint32_t led_bin, PIO pio, uint sm){
          0.0, 0.0, 0.5, 0.0, 0.0}
     };
 
-    for (int frame = 0; frame < 15; frame+3) {  // Iteração de frames
+    for (int frame = 0; frame < 15; frame += 3) {  // Iteração de frames
         for (int16_t i = 0; i < NUM_PIXELS; i++) {    // Iteração de pixels
 
             led_bin = matrix_rgb(animacao[frame][24 - i], animacao[frame + 1][24 - i], animacao[frame + 2][24 - i]);
