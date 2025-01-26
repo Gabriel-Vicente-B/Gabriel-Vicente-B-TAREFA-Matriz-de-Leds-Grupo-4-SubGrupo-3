@@ -75,7 +75,7 @@ int main()
     uint sm = pio_claim_unused_sm(pio, true);
     pio_matrix_program_init(pio, sm, offset, OUT_PIN);
 
-    animacao_7(valor_led, pio, sm, r, g, b);
+    animacao_2(valor_led, pio, sm);
     while (true)
     {
         char tecla = ler_teclado_matricial();
