@@ -8,6 +8,7 @@
 #include "pico/bootrom.h"
 #include "pio_matrix.pio.h"
 
+
 // Definição do número de linhas e colunas do teclado matricial
 #define row 4
 #define column 4
@@ -42,7 +43,7 @@ void all_led_azul_100();
 void all_led_vermelho_80();
 void all_led_verde_50();
 void all_led_branco_20();
-//vetor para criar imagem na matriz de led - 2
+//vetor para criar imagem na matriz de led 5X5 - 2
 void imprimir_binario(int num) {
  int i;
  for (i = 31; i >= 0; i--) {
@@ -294,14 +295,10 @@ void animacao_4(){
     
 }
 void animacao_5(){
-
-
-    
 }
-void animacao_6(){
+  void animacao_6(){
 
-
-    
+   
 }
 void animacao_7(){
 
