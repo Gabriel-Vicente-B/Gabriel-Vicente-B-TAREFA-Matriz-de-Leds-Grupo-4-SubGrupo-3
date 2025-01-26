@@ -30,7 +30,7 @@ const char TecladoMatricial[row][column] = {
 void inicializar_pinos();
 char ler_teclado_matricial();
 void animacao_1(uint32_t valor_led, PIO pio, uint sm, double r, double g, double b);
-void animacao_2();
+void animacao_2(uint32_t led_bin, PIO pio, uint sm);
 void animacao_3(uint32_t valor_led, PIO pio, uint sm, double r, double g, double b);
 void animacao_4();
 void animacao_5();
@@ -85,7 +85,7 @@ int main()
             animacao_1(valor_led, pio, sm, r, g, b);
             break;
         case '2':
-            animacao_2();
+            animacao_2(valor_led, pio, sm);
             break;
         case '3':
             animacao_3(valor_led, pio, sm, r, g, b);
@@ -228,9 +228,117 @@ void animacao_1(uint32_t valor_led, PIO pio, uint sm, double r, double g, double
         sleep_ms(2000); // Aguarda 5 segundos antes de mostrar a próxima letra
     }
 }
-void animacao_2()
-{
-   }
+
+void animacao_2(uint32_t led_bin, PIO pio, uint sm){
+
+    // As matrizes devem ser vistas como conjuntos de 3 (RGB), e a animação tem 5 frames, o que totaliza 15 matrizes
+    double animacao[15][NUM_PIXELS] = {
+        {0.0, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.0, 0.0, 0.0},
+
+        {0.0, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.4, 0.0, 0.0,
+         0.0, 0.0, 0.7, 0.0, 0.0},
+
+        {0.0, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.1, 0.0, 0.0,
+         0.0, 0.0, 0.2, 0.0, 0.0},
+        //////////////////////////
+        {0.0, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.0, 0.0, 0.0},
+
+        {0.0, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.2, 0.0, 0.0,
+         0.0, 0.2, 0.4, 0.2, 0.0,
+         0.0, 0.0, 0.7, 0.0, 0.0,
+         0.0, 0.0, 1.0, 0.0, 0.0},
+
+        {0.0, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.1, 0.0, 0.0,
+         0.0, 0.0, 0.2, 0.0, 0.0,
+         0.0, 0.0, 0.3, 0.0, 0.0},
+        //////////////////////////
+        {0.1, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.0, 0.0, 0.1,
+         0.0, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.0, 0.0, 0.0},
+
+        {0.1, 0.0, 0.1, 0.0, 0.0,
+         0.1, 0.0, 0.4, 0.0, 0.1,
+         0.0, 0.4, 0.7, 0.4, 0.0,
+         0.0, 0.0, 1.0, 0.0, 0.1,
+         0.0, 0.0, 1.0, 0.0, 0.0},
+
+        {0.0, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.1, 0.0, 0.0,
+         0.0, 0.1, 0.2, 0.1, 0.0,
+         0.0, 0.0, 0.3, 0.0, 0.0,
+         0.0, 0.0, 0.3, 0.0, 0.0},
+        //////////////////////////
+        {0.3, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.0, 0.0, 0.3,
+         0.0, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.0, 0.0, 0.0},
+
+        {0.2, 0.0, 0.2, 0.0, 0.0,
+         0.2, 0.0, 0.7, 0.0, 0.2,
+         0.0, 0.7, 1.0, 0.7, 0.0,
+         0.0, 0.0, 1.0, 0.0, 0.1,
+         0.0, 0.0, 1.0, 0.0, 0.0},
+
+        {0.0, 0.0, 0.5, 0.0, 0.0,
+         0.0, 0.0, 0.2, 0.0, 0.0,
+         0.0, 0.2, 0.3, 0.2, 0.0,
+         0.0, 0.0, 0.3, 0.0, 0.1,
+         0.0, 0.0, 0.5, 0.0, 0.0},
+        //////////////////////////
+        {0.8, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.0, 0.0, 0.4,
+         0.0, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.0, 0.0, 0.3,
+         0.0, 0.0, 0.0, 0.0, 0.0},
+
+        {0.2, 0.0, 0.2, 0.0, 0.0,
+         0.4, 0.0, 0.7, 0.0, 0.6,
+         0.0, 0.7, 1.0, 0.7, 0.0,
+         0.0, 0.0, 1.0, 0.0, 0.2,
+         0.0, 0.0, 1.0, 0.0, 0.0},
+
+        {0.0, 0.0, 0.7, 0.0, 0.0,
+         0.0, 0.0, 0.3, 0.0, 0.0,
+         0.0, 0.3, 0.4, 0.3, 0.0,
+         0.0, 0.0, 0.4, 0.0, 0.6,
+         0.0, 0.0, 0.5, 0.0, 0.0}
+    };
+
+    for (int frame = 0; frame < 15; frame+3) {  // Iteração de frames
+        for (int16_t i = 0; i < NUM_PIXELS; i++) {    // Iteração de pixels
+
+            led_bin = matrix_rgb(animacao[frame][24 - i], animacao[frame + 1][24 - i], animacao[frame + 2][24 - i]);
+            pio_sm_put_blocking(pio, sm, led_bin);
+
+        }
+        imprimir_binario(led_bin);
+        sleep_ms(1000);  // 1 frame por segundo
+    }
+    sleep_ms(5000); // Mantém o frame final por 3 segundos
+    led_bin = matrix_rgb(0.0, 0.0, 0.0); // Apaga a imagem
+    pio_sm_put_blocking(pio, sm, led_bin);
+}
+
 void animacao_3(uint32_t valor_led, PIO pio, uint sm, double r, double g, double b)
 {
     double letras[5][25] = {
