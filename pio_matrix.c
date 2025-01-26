@@ -94,7 +94,7 @@ int main()
             animacao_4();
             break;
         case '5':
-            animacao_5();
+            animacao_5(valor_led, pio, sm, r, g, b);
             break;
         case '6':
             animacao_6();
@@ -388,10 +388,49 @@ void animacao_4()
 {
     
 }
-void animacao_5()
-{
-    
+void animacao_5(uint32_t valor_led, PIO pio, uint sm, double r, double g, double b) {
+    double animacaos[5][5][5][3] = { // Corrigido para ter a dimensão correta
+        { // Animação 1
+            {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
+            {{255, 255, 0}, {0, 0, 0}, {255, 255, 0}, {0, 0, 0}, {255, 255, 0}},
+            {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
+            {{255, 255, 0}, {255, 255, 255}, {255, 255, 255}, {255, 255, 255}, {255, 255, 0}}, 
+            {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}}
+        },
+        { // Animação 2
+            {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
+            {{255, 255, 0}, {0, 0, 0}, {255, 255, 0}, {0, 0, 0}, {255, 255, 0}},
+            {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
+            {{255, 255, 0}, {255, 255, 0}, {0, 0, 0}, {255, 255, 0}, {255, 255, 0}},
+            {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}}
+        },
+        { // Animação 3
+            {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
+            {{255, 255, 0}, {0, 0, 0}, {255, 255, 0}, {0, 0, 0}, {255, 255, 0}},
+            {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
+            {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}},
+            {{255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}}
+        }
+        // Adicione as animações 4 e 5 aqui...
+    };
+
+    for (int animacao = 0; animacao < 5; animacao++) { // Corrigido para 5 animações
+        for (int coluna = 0; coluna < 5; coluna++) { 
+            for (int linha = 0; linha < 5; linha++) { 
+                valor_led = matrix_rgb(
+                    animacaos[animacao][linha][coluna][0] / 255.0, 
+                    animacaos[animacao][linha][coluna][1] / 255.0, 
+                    animacaos[animacao][linha][coluna][2] / 255.0
+                );
+                pio_sm_put_blocking(pio, sm, valor_led);
+            }
+        }
+
+        imprimir_binario(valor_led); // Imprime o valor binário da animação exibida
+        sleep_ms(2000); // Espera 2 segundos antes da próxima animação
+    }
 }
+
 void animacao_6()
 {
    
