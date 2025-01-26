@@ -16,7 +16,7 @@
 // Pinos GPIO dispostos segundo linhas e colunas de cima para baixo, esquerda para direita
 // Linha 1 = GPIO_4, Linha 2 = GPIO_8...
 // Coluna 1 = GPIO_17, Coluna 2 = GPIO_18...
-const uint rowPin[row] = {9,8,6, 5};
+const uint rowPin[row] = {8,9,6, 5};
 const uint columnPin[column] = {4, 3, 2, 1};
 
 // Matriz representando os botões do teclado matricial
