@@ -99,7 +99,7 @@ int main()
             animacao_6();
             break;
         case '7':
-            animacao_7();
+            animacao_7(valor_led, pio, sm, r, g, b);
             break;
         case 'A':
             desligar_leds(valor_led, pio, sm, r, g, b);
