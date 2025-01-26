@@ -69,14 +69,11 @@ int main()
     double r = 0.0, b = 0.0, g = 0.0;
     ok = set_sys_clock_khz(128000, false);
     stdio_init_all();
-    if (ok)
-        printf("clock set to %ld\n", clock_get_hz(clk_sys));
+    if (ok) printf("clock set to %ld\n", clock_get_hz(clk_sys));
 
     uint offset = pio_add_program(pio, &pio_matrix_program);
     uint sm = pio_claim_unused_sm(pio, true);
     pio_matrix_program_init(pio, sm, offset, OUT_PIN);
-
-    all_led_azul_100(valor_led, pio, sm, r, g, b);
 
     while (true)
     {
@@ -235,50 +232,46 @@ void animacao_2()
    }
 void animacao_3(uint32_t valor_led, PIO pio, uint sm, double r, double g, double b)
 {
-    double letras[4][25] = {
+    double letras[5][25] = {
         {1.0, 1.0, 1.0, 1.0, 1.0, // Letra T
          0.0, 0.0, 1.0, 0.0, 0.0,
          0.0, 0.0, 1.0, 0.0, 0.0,
          0.0, 0.0, 1.0, 0.0, 0.0,
          0.0, 0.0, 1.0, 0.0, 0.0},
 
-        {1.0, 0.0, 0.0, 0.0, 1.0, // Letra E
-         1.0, 0.0, 0.0, 0.0, 0.0,
-         1.0, 1.0, 1.0, 1.0, 0.0,
-         1.0, 0.0, 0.0, 0.0, 0.0,
-         1.0, 0.0, 0.0, 0.0, 1.0},
+        {1.0, 1.0, 1.0, 1.0, 1.0, // Letra E
+         0.0, 0.0, 0.0, 0.0, 1.0,
+         1.0, 1.0, 1.0, 1.0, 1.0,
+         0.0, 0.0, 0.0, 0.0, 1.0,
+         1.0, 1.0, 1.0, 1.0, 1.0},
 
-        {1.0, 0.0, 0.0, 0.0, 1.0, // Letra C
+        {0.0, 1.0, 1.0, 1.0, 0.0, // Letra C
+         1.0, 0.0, 0.0, 0.0, 1.0,
          1.0, 0.0, 0.0, 0.0, 0.0,
-         1.0, 0.0, 0.0, 0.0, 0.0,
-         1.0, 0.0, 0.0, 0.0, 0.0,
-         1.0, 0.0, 0.0, 0.0, 1.0},
+         1.0, 0.0, 0.0, 0.0, 1.0,
+         0.0, 1.0, 1.0, 1.0, 0.0},
 
         {1.0, 0.0, 0.0, 0.0, 1.0, // Letra H
          1.0, 0.0, 0.0, 0.0, 1.0,
          1.0, 1.0, 1.0, 1.0, 1.0,
          1.0, 0.0, 0.0, 0.0, 1.0,
-         1.0, 0.0, 0.0, 0.0, 1.0}};
+         1.0, 0.0, 0.0, 0.0, 1.0},
+         
+        {0.0, 0.0, 1.0, 0.0, 0.0, // Letra +
+         0.0, 0.0, 1.0, 0.0, 0.0,
+         1.0, 1.0, 1.0, 1.0, 1.0,
+         0.0, 0.0, 1.0, 0.0,0.0,
+         0.0, 0.0, 1.0, 0.0, 0.0}};
 
-    for (int letra = 0; letra < 4; letra++)
-    { // Itera sobre as letras
-        for (int coluna = 0; coluna < 5; coluna++)
-        { // Colunas de cada letra
-            for (int linha = 0; linha < 5; linha++)
-            { // Linhas de cada letra
-                valor_led = matrix_rgb(
-                    letras[letra][linha * 5 + coluna] * b,
-                    letras[letra][linha * 5 + coluna] * r,
-                    letras[letra][linha * 5 + coluna] * g);
-                pio_sm_put_blocking(pio, sm, valor_led);
-            }
+    for (int letra = 0; letra < 5; letra++)
+  {   // Itera sobre as letras
+        for (int16_t i = 0; i < 25; i++)
+        { // Itera sobre os pixels da matriz
+            valor_led = matrix_rgb(letras[letra][24 - i], r = 0, g = 0.0);
+            pio_sm_put_blocking(pio, sm, valor_led);
         }
-
-        // Imprime o valor binário da letra exibida
         imprimir_binario(valor_led);
-
-        // Espera 2 segundos antes de mostrar a próxima letra
-        sleep_ms(2000);
+        sleep_ms(2000); // Aguarda 5 segundos antes de mostrar a próxima letra
     }
 }
 
