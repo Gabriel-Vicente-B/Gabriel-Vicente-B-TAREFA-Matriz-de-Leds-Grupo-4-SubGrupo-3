@@ -88,7 +88,7 @@ int main()
             animacao_3(valor_led, pio, sm, r, g, b);
             break;
         case '4':
-            animacao_4();
+            animacao_4(valor_led, pio, sm, r, g, b);
             break;
         case '5':
             animacao_5(valor_led, pio, sm, r, g, b);
@@ -380,74 +380,49 @@ void animacao_3(uint32_t valor_led, PIO pio, uint sm, double r, double g, double
     }
 }
 
-void animacao_4()
+void animacao_4(uint32_t valor_led, PIO pio, uint sm, double r, double g, double b)
 {
+    double letras[5][25] = {
+        {1, 1, 1, 1, 1,
+         0, 0, 0, 0, 1,
+         1, 1, 1, 1, 1,
+         1, 0, 0, 0,0,
+         1, 1, 1, 1, 1},
 
-    int numeros[5][5][5] = {
-    
-    // Número 5
+        {1, 0, 0, 0, 1,
+        1, 0, 0, 0, 1,
+        1, 1, 1, 1, 1,
+        1, 0, 0, 0, 0,
+        0, 0, 0, 0, 1},
+
+        {1,1, 1, 1, 1,
+        1, 0, 0, 0, 0,
+        1, 1, 1, 1, 1,
+        1, 0, 0, 0, 0,
+        1, 1, 1, 1, 1},
+
+        {1, 1, 1, 1, 1,
+        1, 0, 0, 0, 0,
+        0, 1, 1, 1, 1,
+        0, 0, 0, 0, 1,
+        1, 1, 1, 1, 1},
+
+        {0, 0, 1, 0, 0,
+        0, 0, 1, 1, 0,
+        1, 0, 1, 0, 0,
+        0, 0, 1, 0, 0,
+        1, 1, 1, 1, 1}};
+
+    for (int letra = 0; letra < 5; letra++)
     {
-        {1, 1, 1, 1, 1},
-        {0, 0, 0, 0, 1},
-        {1, 1, 1, 1, 1},
-        {0, 0, 0, 0, 1},
-        {1, 1, 1, 1, 1}
-    }, 
-
-    // Número 4
-    {
-        {1, 1, 1, 1, 1},
-        {1, 0, 0, 0, 0},
-        {1, 1, 1, 1, 1},
-        {0, 0, 0, 0, 1},
-        {1, 1, 1, 1, 1}
-    },
-
-    // Número 3
-    {
-        {1, 0, 0, 0, 1},
-        {1, 0, 0, 0, 1},
-        {1, 1, 1, 1, 1},
-        {0, 0, 0, 0, 1},
-        {0, 0, 0, 0, 1}
-    },
-
-    // Número 2
-    {
-        {1, 1, 1, 1, 1},
-        {0, 0, 0, 0, 1},
-        {0, 1, 1, 1, 1},
-        {0, 0, 0, 0, 1},
-        {1, 1, 1, 1, 1}
-    },
-
-    // Número 1
-    {
-        {0, 0, 1, 0, 0},
-        {0, 1, 1, 0, 0},
-        {1, 0, 1, 0, 0},
-        {0, 0, 1, 0, 0},
-        {1, 1, 1, 1, 1}
-    }
-
-};
-
-    for (int n = 0; n < 5; n++) {
-        for(int i = 0; i < 5; i++){
-            for (int j = 0; j < 5; j++){
-                if (numeros[n][i][j] == 1){
-                    ligar_led(i, j);
-                } else {
-                    desligar_led(i, j);
-                }
-                
-            }
+        for (int16_t i = 0; i < 25; i++)
+        {
+            valor_led = matrix_rgb(letras[letra][24 - i], r = 0, g = 0.0);
+            pio_sm_put_blocking(pio, sm, valor_led);
         }
-        sleep_ms(1000);
-        limpar_matriz();
-
+        imprimir_binario(valor_led);
+        sleep_ms(2000);
     }
-
 }
 void animacao_5(uint32_t valor_led, PIO pio, uint sm, double r, double g, double b)
 {
