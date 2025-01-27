@@ -382,6 +382,72 @@ void animacao_3(uint32_t valor_led, PIO pio, uint sm, double r, double g, double
 
 void animacao_4()
 {
+
+    int numeros[5][5][5] = {
+    
+    // Número 5
+    {
+        {1, 1, 1, 1, 1},
+        {0, 0, 0, 0, 1},
+        {1, 1, 1, 1, 1},
+        {0, 0, 0, 0, 1},
+        {1, 1, 1, 1, 1}
+    }, 
+
+    // Número 4
+    {
+        {1, 1, 1, 1, 1},
+        {1, 0, 0, 0, 0},
+        {1, 1, 1, 1, 1},
+        {0, 0, 0, 0, 1},
+        {1, 1, 1, 1, 1}
+    },
+
+    // Número 3
+    {
+        {1, 0, 0, 0, 1},
+        {1, 0, 0, 0, 1},
+        {1, 1, 1, 1, 1},
+        {0, 0, 0, 0, 1},
+        {0, 0, 0, 0, 1}
+    },
+
+    // Número 2
+    {
+        {1, 1, 1, 1, 1},
+        {0, 0, 0, 0, 1},
+        {0, 1, 1, 1, 1},
+        {0, 0, 0, 0, 1},
+        {1, 1, 1, 1, 1}
+    },
+
+    // Número 1
+    {
+        {0, 0, 1, 0, 0},
+        {0, 1, 1, 0, 0},
+        {1, 0, 1, 0, 0},
+        {0, 0, 1, 0, 0},
+        {1, 1, 1, 1, 1}
+    }
+
+};
+
+    for (int n = 0; n < 5; n++) {
+        for(int i = 0; i < 5; i++){
+            for (int j = 0; j < 5; j++){
+                if (numeros[n][i][j] == 1){
+                    ligar_led(i, j);
+                } else {
+                    desligar_led(i, j);
+                }
+                
+            }
+        }
+        sleep_ms(1000);
+        limpar_matriz();
+
+    }
+
 }
 void animacao_5(uint32_t valor_led, PIO pio, uint sm, double r, double g, double b)
 {
