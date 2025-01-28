@@ -8,9 +8,9 @@ Sua construção foi realizada a partir da divisão de sua implementação em pe
     O integrante Guilherme Pereira ficou responsável por confeccionar a animação "5" ;
     O integrante Gabriel Vicente ficou responsável por confeccionar a estrutura principal do codigo (Main), gerir o repositrio, criar as animações "1","B","C","D","#"e"*" e realizar os testes de funcionamento;
     O integrante Gustavo Lima ficou responsável por confeccionar a animação 6 e o arquivo diagram.JSON;
-    A integrante Mariana Campanati ficou responsável por confeccionar animação 7.
+    A integrante Mariana Campanati ficou responsável por.
 
-A utilização do programa pode ser vista neste vídeo exemplo:
+A utilização do programa pode ser vista neste vídeo exemplo: https://drive.google.com/drive/folders/1LgQ4bd5szY-HsvBK8IPEmZBmAEEpgJkG?hl=pt-br
 
 Para utiliza-lo, basta clonar o repositorio, compilaro arquivo "pio_matrix.c" e rodar o arquivo "diagram.json". É possível de interagir com a matriz de leds através do teclado matricial presente na simulação no Wokwi.
 
