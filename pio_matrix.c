@@ -533,7 +533,7 @@ void animacao_6(uint32_t valor_led, PIO pio, uint sm)
     sleep_ms(2000);
 }
 
-animacao_7(valor_led, pio, sm, r, g, b);
+
 void animacao_7(uint32_t valor_led, PIO pio, uint sm, double r, double g, double b)
 {
     double letras[6][25] ={
@@ -573,20 +573,7 @@ void animacao_7(uint32_t valor_led, PIO pio, uint sm, double r, double g, double
         0.0, 0.0, 1.0, 1.0, 0.0,
         0.0, 0.0, 1.0, 1.0, 0.0}};
 
-
-    for (int letra = 0; letra < 6; letra++)
-  {   // Itera sobre as letras
-        for (int16_t i = 0; i < 25; i++)
-        { // Itera sobre os pixels da matriz
-            valor_led = matrix_rgb(letras[letra][24 - i], r = 0, g = 0.0);
-            pio_sm_put_blocking(pio, sm, valor_led);
-        }
-        imprimir_binario(valor_led);
-        sleep_ms(2000); // Aguarda 5 segundos antes de mostrar a próxima letra
-    }
-};
-
-    for (int letra = 0; letra < 6; letra++)
+    for (int letra = 0; letra < 5; letra++)
     {
         for (int16_t i = 0; i < 25; i++)
         {
@@ -597,6 +584,7 @@ void animacao_7(uint32_t valor_led, PIO pio, uint sm, double r, double g, double
         sleep_ms(2000);
     }
 }
+
 void desligar_leds(uint32_t valor_led, PIO pio, uint sm, double r, double g, double b)
 {
     for (int16_t i = 0; i < NUM_PIXELS; i++)
